@@ -10,7 +10,7 @@ A date table for date/datetime wrangling.
 | yearmonth | yyyy-MMM format    |
 | monthname | MMM format         |
 | day       | dd format          |
-| yyyymmdd  | mmddyyyy format    |
+| yyyymmdd  | mm/dd/yyyy format  |
 | year      | yyyy               |
 | fod       | first time of day  |
 | eod       | last time of day   |
