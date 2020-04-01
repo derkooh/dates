@@ -1,6 +1,6 @@
 library(lubridate)
 library(timeDate)
-library(busdater)
+# library(busdater)
 library(tidyr)
 library(dplyr)
 
@@ -8,8 +8,6 @@ setwd("~/git/dates")
 
 st <- as.Date("1950-01-01")
 en <- as.Date("2099-12-31")
-
-getOption("busdaterFYstart", default = "10-01")
 
 
 getMonth <- function(i){
@@ -36,21 +34,22 @@ df <- data.frame(
   'fod' = floor_date(dd, "day") + hours(0) + seconds(0.01),
   'eod' = dd + hours(24) - seconds(0.01),
   
-  'fow' = floor_date(dd, "week"),
+  'fow' = floor_date(dd, "week") + hours(0) + seconds(0.01),
   'eow' = as_datetime(ceiling_date(dd, "week")) - seconds(0.01),
   
   'fom' = floor_date(dd, "month") + seconds(0.01),
   'eom' = ymd_hms(timeLastDayInMonth(dd) + hours(24) - seconds(0.01)),
   
-  'foq' = floor_date(dd, "quarter"),
+  'foq' = floor_date(dd, "quarter") + hours(0) + seconds(0.01),
   'eoq' = as_datetime(ceiling_date(dd, "quarter")) - seconds(0.01),
   
   'foy' = floor_date(dd, "year") + seconds(0.01),
   'eoy' = ceiling_date(dd, "year") - seconds(0.01),
+  
   'dow' = weekdays(dd),
   'week' = week(dd),
-  'fy' = get_fy(date = dd),
-  'q' = quarter(dd, with_year = FALSE, fiscal_start = 10)
+  'fy' = floor(quarter(dd, with_year = TRUE, fiscal_start = 11)),
+  'q' = quarter(dd, with_year = FALSE, fiscal_start = 11)
   )
 
 
@@ -81,4 +80,3 @@ df <- df %>% unite("mmddyyyy",c(mm,dd,year),sep = "/",remove=FALSE)
 
 
 write.csv(df,"dates.csv",row.names = FALSE)
-
