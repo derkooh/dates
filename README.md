@@ -1,12 +1,12 @@
 # dates
 
 A date table for date/datetime wrangling.
-
+ * New fiscal year on 11-01
 
 | Column    | Description        |
 | ---       | ---                |
-| date      | Date in yyyy-mm-dd |
-| month     | Month number       |
+| date      | yyyy-mm-dd format  |
+| month     | month number       |
 | yearmonth | yyyy-MMM format    |
 | monthname | MMM format         |
 | day       | dd format          |
