@@ -1,6 +1,5 @@
 library(lubridate)
 library(timeDate)
-# library(busdater)
 library(tidyr)
 library(dplyr)
 
@@ -8,6 +7,9 @@ setwd("~/git/dates")
 
 st <- as.Date("1950-01-01")
 en <- as.Date("2099-12-31")
+
+# New Fiscal Year 11/1
+newfiscal = 11
 
 
 getMonth <- function(i){
@@ -48,8 +50,8 @@ df <- data.frame(
   
   'dow' = weekdays(dd),
   'week' = week(dd),
-  'fy' = floor(quarter(dd, with_year = TRUE, fiscal_start = 11)),
-  'q' = quarter(dd, with_year = FALSE, fiscal_start = 11)
+  'fy' = floor(quarter(dd, with_year = TRUE, fiscal_start = newfiscal)),
+  'q' = quarter(dd, with_year = FALSE, fiscal_start = newfiscal)
   )
 
 
