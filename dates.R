@@ -2,10 +2,11 @@ library(lubridate)
 library(timeDate)
 library(tidyr)
 library(dplyr)
+library(RODBC)
 
 setwd("~/git/dates")
 
-st <- as.Date("1950-01-01")
+st <- as.Date("1900-01-01")
 en <- as.Date("2099-12-31")
 
 # New Fiscal Year 11/1
@@ -76,9 +77,58 @@ codes <- data.frame(
 )
 
 df <- inner_join(df,codes)
-
 df <- df %>% unite("yyyymmdd",c(year,mm,dd),sep = "",remove=FALSE)
 df <- df %>% unite("mmddyyyy",c(mm,dd,year),sep = "/",remove=FALSE)
+df <- df %>% unite("yyyymm",c(year,mm),sep = "-",remove=FALSE)
 
 
-write.csv(df,"dates.csv",row.names = FALSE)
+
+
+
+# write.csv(df,"dates.csv",row.names = FALSE)
+
+
+
+
+con <- odbcConnect("9553Dev")
+
+# con <- odbcDriverConnect(
+#   "driver={SQL Server};server=vsqlcorp;database=Technical;trusted_connection=true'")
+
+sqlDrop(con, 'Dates') 
+sqlSave(con, df, tablename = 'Dates', append = FALSE,
+        rownames = FALSE, colnames = FALSE, verbose = FALSE,
+        safer = TRUE, addPK = FALSE, fast = TRUE, test = FALSE, nastring = NULL,
+        varTypes = c(
+          date = 'date',
+          month = 'int',
+          yearmonth = 'varchar(8)',
+          monthname = 'varchar(3)',
+          day = 'int',
+          yyyymmdd = 'int',
+          mmddyyyy = 'varchar(10)',
+          yyyymm = 'varchar(7)',
+          year = 'int',
+          fod = 'datetime',
+          eod = 'datetime',
+          fow = 'datetime',
+          eow = 'datetime',
+          fom = 'datetime',
+          eom = 'datetime',
+          foq = 'datetime',
+          eoq = 'datetime',
+          foy = 'datetime',
+          eoy = 'datetime',
+          dow = 'varchar(12)',
+          week = 'int',   
+          yearq = 'varchar(7)',
+          fy = 'int',
+          q = 'int',
+          mm = 'varchar(2)',
+          dd = 'varchar(2)'
+        ))
+
+odbcCloseAll()
+
+
+
