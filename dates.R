@@ -9,38 +9,19 @@ library(zoo)
 library(lubridate)
 
 setwd("~/git/dates")
-# setwd("E:/git/dates")
+# setwd("c:/Users/9953/git/dates")
 
-st <- as.Date("1900-01-01")
-en <- as.Date("2099-12-31")
+newfiscal = 11 # November
 
-# New Fiscal Year 11/1
-newfiscal = 11
-
-getMonth <- function(i) {
-  mymonths <- c("Jan",
-                "Feb",
-                "Mar",
-                "Apr",
-                "May",
-                "Jun",
-                "Jul",
-                "Aug",
-                "Sep",
-                "Oct",
-                "Nov",
-                "Dec")
-  return(mymonths[i])
-}
-
-
-dd <- ymd(seq(en, st, by = "-1 day"))
+dd <- seq(as.Date("1900-01-01"), as.Date("2099-12-31"), "days")
 
 df <- data.frame(
   'date' = dd,
   'month' = month(dd),
-  'monthname' = getMonth(month(dd)),
+  'monthname' = month(dd, label = TRUE),
+  'mm' = format(dd, "%m"),
   'day' = day(dd),
+  'dd' = format(dd, "%d"),
   'year' = year(dd),
   'fod' = as_datetime(floor_date(dd, "day")),
   'eod' = dd + hours(24) - seconds(0.001),
@@ -58,30 +39,7 @@ df <- data.frame(
 ) %>% unite("yearmonth",
             c(year, monthname),
             sep = "-",
-            remove = FALSE)
-
-
-df <- inner_join(df, data.frame(
-  month = seq(1:12),
-  mm = c(
-    '01',
-    '02',
-    '03',
-    '04',
-    '05',
-    '06',
-    '07',
-    '08',
-    '09',
-    '10',
-    '11',
-    '12'
-  )
-))
-
-
-df <- inner_join(df, data.frame(day = seq(1:31),
-                                dd = as.character(seq(1:31)))) %>%
+            remove = FALSE) %>%
   unite("yyyymmdd", c(year, mm, dd), sep = "", remove = FALSE) %>%
   unite("mmddyyyy", c(mm, dd, year), sep = "/", remove = FALSE) %>%
   unite("yyyymm", c(year, mm), sep = "-", remove = FALSE)
