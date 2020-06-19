@@ -23,7 +23,7 @@ A date table for date/datetime wrangling.
 | foy       | first of year      | 
 | eoy       | end of year        |
 | dow       | Day of week        |
-| week      | week number        |
+| isoweek   | week number        |
 | yearq     | yyyy-quarter       |
 | fy        | fiscal year        |
 | q         | quarter            |

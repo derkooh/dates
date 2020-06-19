@@ -1,3 +1,5 @@
+# Todd Takala
+# 2020-06-19
 
 library(timeDate)
 library(tidyr)
@@ -6,17 +8,14 @@ library(RODBC)
 library(zoo)
 library(lubridate)
 
-# setwd("~/git/dates")
-setwd("E:/git/dates")
-
+setwd("~/git/dates")
+# setwd("E:/git/dates")
 
 st <- as.Date("1900-01-01")
 en <- as.Date("2099-12-31")
 
-
 # New Fiscal Year 11/1
 newfiscal = 11
-
 
 getMonth <- function(i) {
   mymonths <- c("Jan",
@@ -37,9 +36,6 @@ getMonth <- function(i) {
 
 dd <- ymd(seq(en, st, by = "-1 day"))
 
-v1 <- as.character(seq(from = 1, to = length(dd)))
-
-
 df <- data.frame(
   'date' = dd,
   'month' = month(dd),
@@ -47,33 +43,26 @@ df <- data.frame(
   'day' = day(dd),
   'year' = year(dd),
   'fod' = as_datetime(floor_date(dd, "day")),
-  'eod' = dd + hours(24) - seconds(0.1),
+  'eod' = dd + hours(24) - seconds(0.001),
   'fow' = as_datetime(floor_date(dd, "week")),
-  'eow' = as_datetime(ceiling_date(dd, "week")) - seconds(0.1),
+  'eow' = as_datetime(ceiling_date(dd, "week")) - seconds(0.001),
   'fom' = as_datetime(floor_date(dd, "month")),
-  'eom' = ymd_hms(timeLastDayInMonth(dd) + hours(24) - seconds(0.1)),
+  'eom' = ymd_hms(timeLastDayInMonth(dd) + hours(24) - seconds(0.001)),
   'dow' = weekdays(dd),
   'isoweek' = week(dd),
   'q' = quarter(dd, with_year = FALSE, fiscal_start = newfiscal),
   'yearq' = quarter(dd, with_year = TRUE, fiscal_start = newfiscal),
-  'fy' = as.integer(quarter(dd, with_year = TRUE, fiscal_start = newfiscal))
-)
+  'fy' = as.integer(quarter(
+    dd, with_year = TRUE, fiscal_start = newfiscal
+  ))
+) %>% unite("yearmonth",
+            c(year, monthname),
+            sep = "-",
+            remove = FALSE)
 
 
-
-
-
-
-df <-
-  df %>% unite("yearmonth",
-               c(year, monthname),
-               sep = "-",
-               remove = FALSE)
-# df <- df %>% unite("yearq", c(fy, q), sep = "-Q", remove = FALSE)
-
-
-codes <- data.frame(
-  month = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12),
+df <- inner_join(df, data.frame(
+  month = seq(1:12),
   mm = c(
     '01',
     '02',
@@ -88,101 +77,25 @@ codes <- data.frame(
     '11',
     '12'
   )
-)
+))
 
 
-df <- inner_join(df,codes)
-
-codes <- data.frame(
-  day = c(
-    1,
-    2,
-    3,
-    4,
-    5,
-    6,
-    7,
-    8,
-    9,
-    10,
-    11,
-    12,
-    13,
-    14,
-    15,
-    16,
-    17,
-    18,
-    19,
-    20,
-    21,
-    22,
-    23,
-    24,
-    25,
-    26,
-    27,
-    28,
-    29,
-    30,
-    31
-  ),
-  dd = c(
-    '01',
-    '02',
-    '03',
-    '04',
-    '05',
-    '06',
-    '07',
-    '08',
-    '09',
-    '10',
-    '11',
-    '12',
-    '13',
-    '14',
-    '15',
-    '16',
-    '17',
-    '18',
-    '19',
-    '20',
-    '21',
-    '22',
-    '23',
-    '24',
-    '25',
-    '26',
-    '27',
-    '28',
-    '29',
-    '30',
-    '31'
-  )
-)
-
-df <- inner_join(df, codes)
-df <- df %>% unite("yyyymmdd", c(year, mm, dd), sep = "", remove = FALSE)
-df <- df %>% unite("mmddyyyy", c(mm, dd, year), sep = "/", remove = FALSE)
-df <- df %>% unite("yyyymm", c(year, mm), sep = "-", remove = FALSE)
-
-
-
+df <- inner_join(df, data.frame(day = seq(1:31),
+                                dd = as.character(seq(1:31)))) %>%
+  unite("yyyymmdd", c(year, mm, dd), sep = "", remove = FALSE) %>%
+  unite("mmddyyyy", c(mm, dd, year), sep = "/", remove = FALSE) %>%
+  unite("yyyymm", c(year, mm), sep = "-", remove = FALSE)
 
 
 # write.csv(df,"dates.csv",row.names = FALSE)
 
 
-
-
-con <- odbcConnect("9553Dev")
-# con <- odbcConnect("9553Production")
-
+# con <- odbcConnect("9553Dev")
+con <- odbcConnect("9553Production")
 # con <- odbcDriverConnect(
 #   "driver={SQL Server};server=vsqlcorp;database=Technical;trusted_connection=true'")
 
-sqlDrop(con, 'Dates') 
+sqlDrop(con, 'Dates')
 sqlSave(
   con,
   df,
@@ -223,6 +136,4 @@ sqlSave(
 )
 
 odbcCloseAll()
-
-
 
