@@ -6,7 +6,7 @@ library(lubridate)
 library(RODBC)
 
 newfiscal = 11 # November marks the new fiscal year
-dd <- seq(as.Date("1900-01-01"), as.Date("2050-12-31"), "days")
+dd <- seq(as.Date("1925-01-01"), as.Date("2050-12-31"), "days")
 dt <- as_datetime(dd)
 
 df <- data.frame(
@@ -21,19 +21,22 @@ df <- data.frame(
   'mmddyyyy' = format(dd, "%m/%d/%Y"),
   'yyyymm' = format(dd, "%Y-%m"),
   'fod' = floor_date(dt, "day"),
-  'eod' = ceiling_date(dt, "day") - seconds(1),
+  'eod' = dt + days(1) - seconds(1),
   'fow' = floor_date(dt, "week"),
   'eow' = ceiling_date(dt, "week") - seconds(1),
-  'fom' = floor_date(dt, "month"),
-  'eom' = ceiling_date(dt, "month") - seconds(1),
+  'fom' = ceiling_date(dt %m-% months(1), 'month'),
+  'eom' = floor_date(dt %m+% months(1), 'month') + seconds(-1),
   'foy' = floor_date(dt, "year"),
   'eoy' = ceiling_date(dt, "year") - seconds(1),
   'dow' = weekdays(dd),
   'isoweek' = week(dd),
   'q' = quarter(dd, with_year = FALSE, fiscal_start = newfiscal),
-  'yearq' = quarter(dd, with_year = TRUE, fiscal_start = newfiscal),
-  'fy' = as.integer(quarter(dd, with_year = TRUE, fiscal_start = newfiscal))
-) %>% mutate(yearmonth = paste(year, monthname,sep="-"))
+  'fy' = as.integer(
+    quarter(
+      dd, with_year = TRUE, fiscal_start = newfiscal
+  ))
+) %>% mutate(yearmonth = paste(year, monthname, sep = "-")) %>%
+  mutate(yearq = paste('FY', fy, '-Q', q, sep = ""))
 
 ################################################################################
 
@@ -79,7 +82,7 @@ sqlSave(
     eoy = 'datetime',
     dow = 'varchar(12)',
     isoweek = 'int',
-    yearq = 'decimal(5,1)',
+    yearq = 'varchar(9)',
     fy = 'int',
     q = 'int',
     mm = 'varchar(2)',
