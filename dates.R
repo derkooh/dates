@@ -24,7 +24,7 @@ df <- data.frame(
   'eod' = dt + days(1) - seconds(1),
   'fow' = floor_date(dt, "week"),
   'eow' = ceiling_date(dt, "week") - seconds(1),
-  'fom' = ceiling_date(dt %m-% months(1), 'month'),
+  'fom' = floor_date(dt, 'month'),
   'eom' = floor_date(dt %m+% months(1), 'month') + seconds(-1),
   'foy' = floor_date(dt, "year"),
   'eoy' = ceiling_date(dt, "year") - seconds(1),
@@ -37,6 +37,11 @@ df <- data.frame(
   ))
 ) %>% mutate(yearmonth = paste(year, monthname, sep = "-")) %>%
   mutate(yearq = paste('FY', fy, '-Q', q, sep = ""))
+
+
+# df %>% filter(date == '2020-08-01')
+
+
 
 ################################################################################
 
