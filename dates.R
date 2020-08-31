@@ -1,9 +1,10 @@
 # Todd Takala
-# 2020-06-19
+# 2020-08-31
 
 library(dplyr)
 library(lubridate)
 library(RODBC)
+library(data.table)
 
 newfiscal = 11 # November marks the new fiscal year
 dd <- seq(as.Date("1925-01-01"), as.Date("2050-12-31"), "days")
@@ -37,6 +38,11 @@ df <- data.frame(
   ))
 ) %>% mutate(yearmonth = paste(year, monthname, sep = "-")) %>%
   mutate(yearq = paste('FY', fy, '-Q', q, sep = ""))
+
+
+fwrite(df, 'dates.csv')
+
+
 
 
 # df %>% filter(date == '2020-08-01')
