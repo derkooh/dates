@@ -1,10 +1,9 @@
 # Todd Takala
-# 2020-08-31
+# 2020-06-19
 
 library(dplyr)
 library(lubridate)
 library(RODBC)
-# library(data.table)
 
 newfiscal = 11 # November marks the new fiscal year
 dd <- seq(as.Date("1925-01-01"), as.Date("2050-12-31"), "days")
@@ -22,26 +21,22 @@ df <- data.frame(
   'mmddyyyy' = format(dd, "%m/%d/%Y"),
   'yyyymm' = format(dd, "%Y-%m"),
   'fod' = floor_date(dt, "day"),
-  'eod' = dt + days(1) - milliseconds(1),
+  'eod' = dt + days(1) - seconds(1),
   'fow' = floor_date(dt, "week"),
-  'eow' = ceiling_date(dt, "week") - milliseconds(1),
+  'eow' = ceiling_date(dt, "week") - seconds(1),
   'fom' = floor_date(dt, 'month'),
-  'eom' = floor_date(dt %m+% months(1), 'month') - milliseconds(1),
+  'eom' = floor_date(dt %m+% months(1), 'month') + seconds(-1),
   'foy' = floor_date(dt, "year"),
-  'eoy' = ceiling_date(dt, "year") - milliseconds(1),
+  'eoy' = ceiling_date(dt, "year") - seconds(1),
   'dow' = weekdays(dd),
   'isoweek' = week(dd),
   'q' = quarter(dd, with_year = FALSE, fiscal_start = newfiscal),
-  'fy' = as.integer(quarter(dd, with_year = TRUE, fiscal_start = newfiscal))
-) %>% mutate(
-    yearmonth = paste(year, monthname, sep = "-"),
-    yearq = paste('FY', fy, '-Q', q, sep = "")
-    )
-
-
-write.csv(df, 'dates.csv')
-
-
+  'fy' = as.integer(
+    quarter(
+      dd, with_year = TRUE, fiscal_start = newfiscal
+    ))
+) %>% mutate(yearmonth = paste(year, monthname, sep = "-")) %>%
+  mutate(yearq = paste('FY', fy, '-Q', q, sep = ""))
 
 
 # df %>% filter(date == '2020-08-01')
