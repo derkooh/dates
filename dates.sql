@@ -93,7 +93,37 @@ SELECT base_date,
            WHEN 10
            THEN CAST(YEAR(base_date) AS NVARCHAR) + '-Q4'
            ELSE 'ERROR!'
-       END fy_quarter, 
+       END fy_quarter,
+	   
+	   CASE MONTH(base_date)
+           WHEN 11
+           THEN 'FALL'
+           WHEN 12
+           THEN 'WINTER'
+           WHEN 1
+           THEN 'WINTER'
+           WHEN 2
+           THEN 'WINTER'
+           WHEN 3
+           THEN 'SPRING'
+           WHEN 4
+           THEN 'SPRING'
+           WHEN 5
+           THEN 'SPRING'
+           WHEN 6
+           THEN 'SUMMER'
+           WHEN 7
+           THEN 'SUMMER'
+           WHEN 8
+           THEN 'SUMMER'
+           WHEN 9
+           THEN 'FALL'
+           WHEN 10
+           THEN 'FALL'
+           ELSE 'ERROR!'
+       END season,
+
+
        CAST(DATEADD(week, DATEDIFF(week, 0, base_date), 0) AS DATE) AS start_of_week, 
        DATEADD(ns, -100, DATEADD(D, 1, CONVERT(DATETIME2, DATEADD(week, DATEDIFF(week, 0, base_date), 6)))) AS end_of_week, 
        CAST(DATEADD(month, DATEDIFF(month, 0, base_date), 0) AS DATE) AS start_of_month, 
