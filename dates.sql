@@ -116,6 +116,6 @@ SELECT base_date,
        CAST(DATEADD(MONTH, DATEDIFF(MONTH, 0, base_date) - 6, 0) AS DATE) AS first_of_prev_6_months, 
        CAST(DATEADD(MONTH, DATEDIFF(MONTH, 0, base_date) - 3, 0) AS DATE) AS first_of_prev_3_months, 
        CAST(DATEADD(MONTH, DATEDIFF(MONTH, 0, base_date) - 2, 0) AS DATE) AS first_of_prev_2_months
---INTO date_reference
+INTO date_reference
 FROM date_ref
 ORDER BY base_date DESC;
