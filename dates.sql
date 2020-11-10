@@ -1,4 +1,5 @@
-SELECT base_date, 
+SELECT base_date,
+CONVERT(VARCHAR(8), base_date) as base_date_char,
        CONVERT(VARCHAR, base_date, 101) AS us_date, 
        CONVERT(VARCHAR(10), base_date, 112) AS iso_date, 
        DATEADD(ns, -100, DATEADD(D, 1, CONVERT(DATETIME2, base_date))) AS base_date_end, 
